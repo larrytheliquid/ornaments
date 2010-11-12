@@ -2,13 +2,13 @@ module PlainDesc where
 open import Data.Unit
 open import Data.Product
 
+data NatTag : Set where
+  zz ss : NatTag
+
 data PlainDesc : Set₁ where
   arg : (A : Set) → (A → PlainDesc) → PlainDesc
   rec : PlainDesc → PlainDesc
   ret : PlainDesc
-
-data NatTag : Set where
-  zz ss : NatTag
 
 NatPlain : PlainDesc
 NatPlain = arg NatTag f where

@@ -11,12 +11,6 @@ data Desc (I : Set) : Set₁ where
   rec : I → Desc I → Desc I
   ret : I → Desc I
 
-NatDesc : Desc ⊤
-NatDesc = arg NatTag f where
-  f : NatTag → Desc ⊤
-  f zz = ret _
-  f ss = rec _ (ret _)
-
 ⟦_⟧ : {I : Set} → Desc I → (I → Set) → I → Set
 ⟦ arg A D ⟧ R i = Σ A (λ a → ⟦ D a ⟧ R i)
 ⟦ rec h D ⟧ R i = R h × ⟦ D ⟧ R i
@@ -24,6 +18,12 @@ NatDesc = arg NatTag f where
 
 data Data {I : Set} (D : Desc I) : I → Set where
   ⟪_⟫ : ∀ {i} → ⟦ D ⟧ (Data D) i → Data D i
+
+NatDesc : Desc ⊤
+NatDesc = arg NatTag f where
+  f : NatTag → Desc ⊤
+  f zz = ret _
+  f ss = rec _ (ret _)
 
 Nat : Set
 Nat = Data NatDesc _
@@ -54,5 +54,4 @@ nil = ⟪ zz , refl ⟫
 
 cons : ∀ {n X} → X → Vec X n → Vec X (suc n)
 cons {n} x xs = ⟪ ss , x , n , xs , refl ⟫
-
 
