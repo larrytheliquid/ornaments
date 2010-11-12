@@ -27,4 +27,21 @@ ListOrn X = arg NatTag f where
   f zz = ret (inv _)
   f ss = new X (λ _ → rec (inv _) (ret (inv _)))
 
+orn : ∀ {J I} {e : J → I} {D : Desc I} →
+  Orn J e D → Desc J
+orn (arg A Of) = arg A (λ a → orn (Of a))
+orn (rec (inv j) O) = rec j (orn O)
+orn (ret (inv j)) = ret j
+orn (new A Of) = arg A (λ a → orn (Of a))
 
+ListDesc : Set → Desc ⊤
+ListDesc X = orn (ListOrn X)
+
+List : Set → Set
+List X = Data (ListDesc X) _
+
+nil : ∀ {X} → List X
+nil = ⟪ zz , refl ⟫
+
+cons : ∀ {X} → X → List X → List X
+cons x xs = ⟪ ss , x , xs , refl ⟫

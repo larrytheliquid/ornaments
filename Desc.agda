@@ -34,24 +34,39 @@ zero = ⟪ zz , refl ⟫
 suc : Nat → Nat
 suc n = ⟪ ss , n , refl ⟫
 
-VecDesc : Set → Desc Nat
-VecDesc X = arg NatTag f where
-  g : Nat → Desc Nat
-  g n = rec n (ret (suc n))
+-- ListDesc : Set → Desc ⊤
+-- ListDesc X = arg NatTag f where
+--   f : NatTag → Desc ⊤
+--   f zz = ret _
+--   f ss = arg X (λ _ → rec _ (ret _))
 
-  h : X → Desc Nat
-  h _ = arg Nat g
+-- List : Set → Set
+-- List X = Data (ListDesc X) _
 
-  f : NatTag → Desc Nat
-  f zz = ret zero
-  f ss = arg X h
+-- nil : ∀ {X} → List X
+-- nil = ⟪ zz , refl ⟫
 
-Vec : Set → Nat → Set
-Vec X n = Data (VecDesc X) n
+-- cons : ∀ {X} → X → List X → List X
+-- cons x xs = ⟪ ss , x , xs , refl ⟫
 
-nil : ∀ {X} → Vec X zero
-nil = ⟪ zz , refl ⟫
+-- VecDesc : Set → Desc Nat
+-- VecDesc X = arg NatTag f where
+--   g : Nat → Desc Nat
+--   g n = rec n (ret (suc n))
 
-cons : ∀ {n X} → X → Vec X n → Vec X (suc n)
-cons {n} x xs = ⟪ ss , x , n , xs , refl ⟫
+--   h : X → Desc Nat
+--   h _ = arg Nat g
+
+--   f : NatTag → Desc Nat
+--   f zz = ret zero
+--   f ss = arg X h
+
+-- Vec : Set → Nat → Set
+-- Vec X n = Data (VecDesc X) n
+
+-- nil : ∀ {X} → Vec X zero
+-- nil = ⟪ zz , refl ⟫
+
+-- cons : ∀ {n X} → X → Vec X n → Vec X (suc n)
+-- cons {n} x xs = ⟪ ss , x , n , xs , refl ⟫
 
