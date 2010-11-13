@@ -32,10 +32,18 @@ mutual
   map-fold D' (rec _ D) φ (d , ds) = fold φ d , map-fold D' D φ ds
   map-fold D' (ret _) _ ds = ds
 
+-- Nat → ⟦ Nat ⟧ (λ _ → Nat) → (λ _ → Nat)
 add-Alg : Nat → Alg NatDesc (λ _ → Nat)
 add-Alg n (zz , refl) = n
-add-Alg n (ss , acc , refl) = suc acc
+add-Alg n (ss , sum , refl) = suc sum
 
 _+_ : Nat → Nat → Nat
 n + m = fold (add-Alg m) n
 
+-- Vec X n → ⟦ Vec X ⟧ (λ m → Vec X (m + n)) → (λ m → Vec X (m + n))
+concat-Alg : ∀ {n X} → Vec X n → Alg (VecDesc X) (λ m → Vec X (m + n))
+concat-Alg ys (zz , refl) = ys
+concat-Alg ys (ss , x , m , conc , refl) = vcons x conc
+
+_++_ : ∀ {X m n} → Vec X m → Vec X n → Vec X (m + n)
+xs ++ ys = fold (concat-Alg ys) xs
