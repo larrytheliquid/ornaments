@@ -49,24 +49,24 @@ suc n = ⟪ ss , n , refl ⟫
 -- cons : ∀ {X} → X → List X → List X
 -- cons x xs = ⟪ ss , x , xs , refl ⟫
 
--- VecDesc : Set → Desc Nat
--- VecDesc X = arg NatTag f where
---   g : Nat → Desc Nat
---   g n = rec n (ret (suc n))
+VecDesc : Set → Desc Nat
+VecDesc X = arg NatTag f where
+  g : Nat → Desc Nat
+  g n = rec n (ret (suc n))
 
---   h : X → Desc Nat
---   h _ = arg Nat g
+  h : X → Desc Nat
+  h _ = arg Nat g
 
---   f : NatTag → Desc Nat
---   f zz = ret zero
---   f ss = arg X h
+  f : NatTag → Desc Nat
+  f zz = ret zero
+  f ss = arg X h
 
--- Vec : Set → Nat → Set
--- Vec X n = Data (VecDesc X) n
+Vec : Set → Nat → Set
+Vec X n = Data (VecDesc X) n
 
--- nil : ∀ {X} → Vec X zero
--- nil = ⟪ zz , refl ⟫
+vnil : ∀ {X} → Vec X zero
+vnil = ⟪ zz , refl ⟫
 
--- cons : ∀ {n X} → X → Vec X n → Vec X (suc n)
--- cons {n} x xs = ⟪ ss , x , n , xs , refl ⟫
+vcons : ∀ {n X} → X → Vec X n → Vec X (suc n)
+vcons {n} x xs = ⟪ ss , x , n , xs , refl ⟫
 
