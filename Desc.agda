@@ -12,7 +12,7 @@ data Desc (I : Set) : Set₁ where
   ret : I → Desc I
 
 ⟦_⟧ : {I : Set} → Desc I → (I → Set) → I → Set
-⟦ arg A D ⟧ R i = Σ A (λ a → ⟦ D a ⟧ R i)
+⟦ arg A Df ⟧ R i = Σ A (λ a → ⟦ Df a ⟧ R i)
 ⟦ rec h D ⟧ R i = R h × ⟦ D ⟧ R i
 ⟦ ret o ⟧ R i = o ≡ i
 

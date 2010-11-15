@@ -24,3 +24,12 @@ forget : ∀ {I J e} {D : Desc I}
   (O : Orn J e D) →
   μ (orn O) ⊆ (λ x → μ D (e x))
 forget O = fold (orn-Alg O)
+
+Alg-orn : ∀ {I J}
+  (D : Desc I) →
+  Alg D J →
+  Orn (Σ I J) proj₁ D
+Alg-orn (arg A Df) φ = arg A (λ a → Alg-orn (Df a) (λ x → φ (a , x)))
+Alg-orn {J = J} (rec i D) φ =
+  new (J i) (λ j → rec (inv (i , j)) (Alg-orn D (λ x → φ (j , x))))
+Alg-orn (ret i) φ = ret (inv (i , φ refl))
