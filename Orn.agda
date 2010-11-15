@@ -38,7 +38,7 @@ ListDesc : Set → Desc ⊤
 ListDesc X = orn (ListOrn X)
 
 List : Set → Set
-List X = Data (ListDesc X) _
+List X = μ (ListDesc X) _
 
 nil : ∀ {X} → List X
 nil = ⟪ zz , refl ⟫

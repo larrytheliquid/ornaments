@@ -18,16 +18,16 @@ map (rec _ D) f (d , ds) = f d , map D f ds
 map (ret _) _ ds = ds
 
 -- fold : ∀ {I X} {D : Desc I} →
---   ⟦ D ⟧ X ⊆ X → Data D ⊆ X
+--   ⟦ D ⟧ X ⊆ X → μ D ⊆ X
 -- fold {D = D} φ ⟪ ds ⟫ = φ (map D (fold φ) ds)
 
 mutual
   fold : ∀ {I X} {D : Desc I} →
-    ⟦ D ⟧ X ⊆ X → Data D ⊆ X
+    ⟦ D ⟧ X ⊆ X → μ D ⊆ X
   fold {D = D} φ ⟪ ds ⟫ = φ (map-fold D D φ ds)
 
   map-fold : ∀ {I X} (D' D : Desc I) →
-    (⟦ D' ⟧ X ⊆ X) → ⟦ D ⟧ (Data D') ⊆ ⟦ D ⟧ X
+    (⟦ D' ⟧ X ⊆ X) → ⟦ D ⟧ (μ D') ⊆ ⟦ D ⟧ X
   map-fold D' (arg _ D) φ (a , ds) = a , map-fold D' (D a) φ ds
   map-fold D' (rec _ D) φ (d , ds) = fold φ d , map-fold D' D φ ds
   map-fold D' (ret _) _ ds = ds
@@ -40,7 +40,7 @@ add-Alg _ (ss , acc , refl) = suc acc
 _+_ : Nat → Nat → Nat
 n + m = fold (add-Alg m) n
 
--- Vec here is really shorthand for fixpoint Data = ⟪ ⟦VecDesc X⟧ ⟪⟦VecDesc X⟧ etc⟫ ⟫
+-- Vec here is really shorthand for fixpoint μ = ⟪ ⟦VecDesc X⟧ ⟪⟦VecDesc X⟧ etc⟫ ⟫
 -- Vec X n → ⟦ VecDesc X ⟧ (λ m → Vec X (m + n)) → (λ m → Vec X (m + n))
 concat-Alg : ∀ {n X} → Vec X n → Alg (VecDesc X) (λ m → Vec X (m + n))
 concat-Alg ys (zz , refl) = ys

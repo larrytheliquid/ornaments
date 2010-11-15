@@ -17,10 +17,10 @@ orn-Alg' (new A Of) (a , ds) = orn-Alg' (Of a) ds
 
 orn-Alg : ∀ {I J e} {D : Desc I}
   (O : Orn J e D) →
-  Alg (orn O) (λ x → Data D (e x))
+  Alg (orn O) (λ x → μ D (e x))
 orn-Alg O ds = ⟪ orn-Alg' O ds ⟫
 
 forget : ∀ {I J e} {D : Desc I} 
   (O : Orn J e D) →
-  Data (orn O) ⊆ (λ x → Data D (e x))
+  μ (orn O) ⊆ (λ x → μ D (e x))
 forget O = fold (orn-Alg O)
