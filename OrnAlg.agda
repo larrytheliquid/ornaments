@@ -59,6 +59,9 @@ concat-Alg _ (ss , x , _ , acc , refl) = vcons x acc
 _++_ : ∀ {X m n} → Vec X m → Vec X n → Vec X (m + n)
 xs ++ ys = fold (concat-Alg ys) xs
 
+to-list : ∀ {X n} → Vec X n → List X
+to-list {X} = forget (Vec-Orn X)
+
 Ge-Desc : Nat → Desc (⊤ × Nat)
 Ge-Desc y = orn (Alg-orn NatDesc (add-Alg y))
 
