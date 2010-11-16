@@ -21,8 +21,8 @@ data Orn {I : Set} (J : Set) (e : J → I) : Desc I → Set₁ where
   new : {D : Desc I} →
     (A : Set) → (A → Orn J e D) → Orn J e D
 
-ListOrn : Set → Orn ⊤ _ NatDesc
-ListOrn X = arg NatTag f where
+List-Orn : Set → Orn ⊤ _ NatDesc
+List-Orn X = arg NatTag f where
   f : (_ : NatTag) → Orn _ _ _
   f zz = ret (inv _)
   f ss = new X (λ _ → rec (inv _) (ret (inv _)))
@@ -34,11 +34,11 @@ orn (rec (inv j) O) = rec j (orn O)
 orn (ret (inv j)) = ret j
 orn (new A Of) = arg A (λ a → orn (Of a))
 
-ListDesc : Set → Desc ⊤
-ListDesc X = orn (ListOrn X)
+List-Desc : Set → Desc ⊤
+List-Desc X = orn (List-Orn X)
 
 List : Set → Set
-List X = μ (ListDesc X) _
+List X = μ (List-Desc X) _
 
 nil : ∀ {X} → List X
 nil = ⟪ zz , refl ⟫

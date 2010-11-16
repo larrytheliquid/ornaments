@@ -40,11 +40,12 @@ add-Alg _ (ss , acc , refl) = suc acc
 _+_ : Nat → Nat → Nat
 n + m = fold (add-Alg m) n
 
--- Vec here is really shorthand for fixpoint μ = ⟪ ⟦VecDesc X⟧ ⟪⟦VecDesc X⟧ etc⟫ ⟫
--- Vec X n → ⟦ VecDesc X ⟧ (λ m → Vec X (m + n)) → (λ m → Vec X (m + n))
-concat-Alg : ∀ {n X} → Vec X n → Alg (VecDesc X) (λ m → Vec X (m + n))
-concat-Alg ys (zz , refl) = ys
-concat-Alg _ (ss , x , _ , acc , refl) = vcons x acc
+-- -- Vec here is really shorthand for fixpoint μ = ⟪ ⟦VecDesc X⟧ ⟪⟦VecDesc X⟧ etc⟫ ⟫
+-- -- Vec X n → ⟦ VecDesc X ⟧ (λ m → Vec X (m + n)) → (λ m → Vec X (m + n))
+-- concat-Alg : ∀ {n X} → Vec X n → Alg (Vec-Desc X) (λ m → Vec X (m + n))
+-- concat-Alg ys (zz , refl) = ys
+-- concat-Alg _ (ss , x , _ , acc , refl) = vcons x acc
 
-_++_ : ∀ {X m n} → Vec X m → Vec X n → Vec X (m + n)
-xs ++ ys = fold (concat-Alg ys) xs
+-- _++_ : ∀ {X m n} → Vec X m → Vec X n → Vec X (m + n)
+-- xs ++ ys = fold (concat-Alg ys) xs
+
