@@ -46,6 +46,21 @@ Vec-Desc X = orn (Vec-Orn X)
 Vec : Set → Nat → Set
 Vec X n = μ (Vec-Desc X) (_ , n)
 
+Hm-Orn : (X : Set) → Orn ((⊤ × Nat) × List X) proj₁ (Vec-Desc X)
+Hm-Orn X = Alg-orn (Vec-Desc X) (orn-Alg (Vec-Orn X))
+
+Hm-Desc : (X : Set) → Desc ((⊤ × Nat) × List X)
+Hm-Desc X = orn (Hm-Orn X)
+
+Hm : (X : Set) → Nat → List X → Set
+Hm X n xs = μ (Hm-Desc X) ((_ , n) , xs)
+
+hmnil : ∀ {A} → Hm A zero nil
+hmnil = ⟪ zz , refl ⟫
+
+hmcons : ∀ {n A as} → (a : A) → Hm A n as → Hm A (suc n) (cons a as)
+hmcons {n} {as = as} x xs = ⟪ ss , x , n , as , xs , refl ⟫
+
 vnil : ∀ {X} → Vec X zero
 vnil = ⟪ zz , refl ⟫
 
