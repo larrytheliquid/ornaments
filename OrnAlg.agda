@@ -62,8 +62,11 @@ xs ++ ys = fold (concat-Alg ys) xs
 to-list : ∀ {X n} → Vec X n → List X
 to-list {X} = forget (Vec-Orn X)
 
+Ge-Orn : Nat → Orn (⊤ × Nat) proj₁ NatDesc
+Ge-Orn n = Alg-orn NatDesc (add-Alg n)
+
 Ge-Desc : Nat → Desc (⊤ × Nat)
-Ge-Desc y = orn (Alg-orn NatDesc (add-Alg y))
+Ge-Desc n = orn (Ge-Orn n)
 
 Ge : Nat → Nat → Set
 Ge m n = μ (Ge-Desc n) (_ , m)
