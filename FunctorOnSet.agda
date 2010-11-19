@@ -35,6 +35,22 @@ Orn⇛Desc (rec O) = rec (Orn⇛Desc O)
 Orn⇛Desc ret = ret
 Orn⇛Desc (new X Of) = arg X (λ x → Orn⇛Desc (Of x))
 
+Alg : Desc → Set → Set
+Alg D X = ⟦ D ⟧ X → X
+
+mutual
+  fold : ∀ {X} {D : Desc} →
+    Alg D X → μ D → X
+  fold {D = D} φ (init ds) = φ (map-fold D D φ ds)
+
+  map-fold : ∀ {X} (D' D : Desc) →
+    Alg D' X → ⟦ D ⟧ (μ D') → ⟦ D ⟧ X
+  map-fold D' (arg _ Df) φ (x , ds) = x , map-fold D' (Df x) φ ds
+  map-fold D' (rec D) φ (d , ds) = fold φ d , map-fold D' D φ ds
+  map-fold D' ret _ ds = ds
+
+----------------------------------------------------
+
 ℕ-Desc : Desc
 ℕ-Desc = arg Two f where
   f : Two → Desc
@@ -68,3 +84,17 @@ List X = μ (List-Desc X)
 _∷_ : ∀ {X} → X → List X → List X
 x ∷ xs = init (two , x , xs , _)
 
+
+add-Alg : ℕ → Alg ℕ-Desc ℕ
+add-Alg n (one , _) = n
+add-Alg _ (two , acc , _) = suc acc
+
+_+_ : ℕ → ℕ → ℕ
+n + m = fold (add-Alg m) n
+
+concat-Alg : ∀ {X} → List X → Alg (List-Desc X) (List X)
+concat-Alg ys (one , _) = ys
+concat-Alg _ (two , x , acc , _) = x ∷ acc
+
+_++_ : ∀ {X} → List X → List X → List X
+xs ++ ys = fold (concat-Alg ys) xs
