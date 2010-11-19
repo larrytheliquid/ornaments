@@ -8,14 +8,14 @@ data Two : Set where
   one two : Two
 
 data Desc : Set₁ where
-  arg : (X : Set) → (X → Desc) → Desc
-  rec : Desc → Desc
   ret : Desc
+  rec : Desc → Desc
+  arg : (X : Set) → (X → Desc) → Desc
 
 ⟦_⟧ : Desc → Set → Set
-⟦ arg X D ⟧ R = Σ X (λ x → ⟦ D x ⟧ R)
-⟦ rec D ⟧   R = R × ⟦ D ⟧ R
 ⟦ ret ⟧     R = ⊤
+⟦ rec D ⟧   R = R × ⟦ D ⟧ R
+⟦ arg X D ⟧ R = Σ X (λ x → ⟦ D x ⟧ R)
 
 data μ (D : Desc) : Set where
   init : ⟦ D ⟧ (μ D) → μ D
@@ -24,19 +24,19 @@ Alg : Desc → Set → Set
 Alg D X = ⟦ D ⟧ X → X
 
 data Orn : Desc → Set₁ where
-  arg : (X : Set) → {Df : X → Desc}  →
-    ((x : X) → Orn (Df x)) → Orn (arg X Df)
-  rec : {D : Desc} →
-    Orn D → Orn (rec D)
   ret :
     Orn ret
+  rec : {D : Desc} →
+    Orn D → Orn (rec D)
+  arg : (X : Set) → {Df : X → Desc}  →
+    ((x : X) → Orn (Df x)) → Orn (arg X Df)
   new : {D : Desc} →
     (X : Set) → (X → Orn D) → Orn D
 
 Orn⇛Desc : {D : Desc} → Orn D → Desc
-Orn⇛Desc (arg X Of) = arg X (λ x → Orn⇛Desc (Of x))
-Orn⇛Desc (rec O) = rec (Orn⇛Desc O)
 Orn⇛Desc ret = ret
+Orn⇛Desc (rec O) = rec (Orn⇛Desc O)
+Orn⇛Desc (arg X Of) = arg X (λ x → Orn⇛Desc (Of x))
 Orn⇛Desc (new X Of) = arg X (λ x → Orn⇛Desc (Of x))
 
 mutual
@@ -46,23 +46,9 @@ mutual
 
   map-fold : ∀ {X} (D' D : Desc) →
     Alg D' X → ⟦ D ⟧ (μ D') → ⟦ D ⟧ X
-  map-fold D' (arg _ Df) φ (x , ds) = x , map-fold D' (Df x) φ ds
-  map-fold D' (rec D) φ (d , ds) = fold φ d , map-fold D' D φ ds
   map-fold D' ret _ ds = ds
-
-forget-Alg : ∀ {D : Desc}
-  (O : Orn D) →
-  Alg (Orn⇛Desc O) (μ D)
-forget-Alg O ds = init (forget-Alg' O ds)
-  where
-  forget-Alg' : ∀ {R} {D : Desc}
-    (O : Orn D) →
-    ⟦ Orn⇛Desc O ⟧ R →
-    ⟦ D ⟧ R
-  forget-Alg' (arg X Of) (x , ds) = x , forget-Alg' (Of x) ds
-  forget-Alg' (rec O) (d , ds) = d , forget-Alg' O ds
-  forget-Alg' ret _ = _
-  forget-Alg' (new X Of) (x , ds) = forget-Alg' (Of x) ds  
+  map-fold D' (rec D) φ (d , ds) = fold φ d , map-fold D' D φ ds
+  map-fold D' (arg _ Df) φ (x , ds) = x , map-fold D' (Df x) φ ds
 
 ----------------------------------------------------
 
@@ -130,3 +116,25 @@ id-List-Alg (two , x , acc , _) = x ∷ acc
 
 id-List : ∀ {X} → List X → List X
 id-List xs = fold id-List-Alg xs
+
+----------------------------------------------------
+
+forget-Alg : ∀ {D : Desc}
+  (O : Orn D) →
+  Alg (Orn⇛Desc O) (μ D)
+forget-Alg O ds = init (forget-Alg' O ds)
+  where
+  forget-Alg' : ∀ {R} {D : Desc}
+    (O : Orn D) →
+    ⟦ Orn⇛Desc O ⟧ R →
+    ⟦ D ⟧ R
+  forget-Alg' ret _ = _
+  forget-Alg' (rec O) (d , ds) = d , forget-Alg' O ds
+  forget-Alg' (arg X Of) (x , ds) = x , forget-Alg' (Of x) ds
+  forget-Alg' (new X Of) (x , ds) = forget-Alg' (Of x) ds
+
+forget : {D : Desc}
+  (O : Orn D) →
+  μ (Orn⇛Desc O) →
+  μ D
+forget O = fold (forget-Alg O)
