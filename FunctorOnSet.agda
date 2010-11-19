@@ -1,5 +1,6 @@
 module FunctorOnSet where
 open import Data.Unit
+open import Data.Sum
 open import Data.Product
 open import Relation.Binary.PropositionalEquality
 
@@ -100,4 +101,18 @@ concat-Alg _ (two , x , acc , _) = x ∷ acc
 _++_ : ∀ {X} → List X → List X → List X
 xs ++ ys = fold (concat-Alg ys) xs
 
--- initial algebra for nat & lists
+----------------------------------------------------
+
+id-ℕ-Alg : Alg ℕ-Desc ℕ
+id-ℕ-Alg (one , _) = zero
+id-ℕ-Alg (two , acc , _) = suc acc
+
+id-ℕ : ℕ → ℕ
+id-ℕ n = fold id-ℕ-Alg n
+
+id-List-Alg : ∀ {X} → Alg (List-Desc X) (List X)
+id-List-Alg (one , _) = []
+id-List-Alg (two , x , acc , _) = x ∷ acc
+
+id-List : ∀ {X} → List X → List X
+id-List xs = fold id-List-Alg xs
