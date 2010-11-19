@@ -19,6 +19,9 @@ data Desc : Set₁ where
 data μ (D : Desc) : Set where
   init : ⟦ D ⟧ (μ D) → μ D
 
+Alg : Desc → Set → Set
+Alg D X = ⟦ D ⟧ X → X
+
 data Orn : Desc → Set₁ where
   arg : (X : Set) → {Df : X → Desc}  →
     ((x : X) → Orn (Df x)) → Orn (arg X Df)
@@ -34,9 +37,6 @@ Orn⇛Desc (arg X Of) = arg X (λ x → Orn⇛Desc (Of x))
 Orn⇛Desc (rec O) = rec (Orn⇛Desc O)
 Orn⇛Desc ret = ret
 Orn⇛Desc (new X Of) = arg X (λ x → Orn⇛Desc (Of x))
-
-Alg : Desc → Set → Set
-Alg D X = ⟦ D ⟧ X → X
 
 mutual
   fold : ∀ {X} {D : Desc} →
@@ -84,6 +84,7 @@ List X = μ (List-Desc X)
 _∷_ : ∀ {X} → X → List X → List X
 x ∷ xs = init (two , x , xs , _)
 
+----------------------------------------------------
 
 add-Alg : ℕ → Alg ℕ-Desc ℕ
 add-Alg n (one , _) = n
@@ -98,3 +99,5 @@ concat-Alg _ (two , x , acc , _) = x ∷ acc
 
 _++_ : ∀ {X} → List X → List X → List X
 xs ++ ys = fold (concat-Alg ys) xs
+
+-- initial algebra for nat & lists
