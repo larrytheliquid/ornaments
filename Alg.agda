@@ -33,9 +33,13 @@ mutual
   map-fold D' (ret _) _ ds = ds
 
 -- Nat → ⟦ NatDesc ⟧ (λ _ → Nat) → (λ _ → Nat)
+-- make Nat actually take its index for a more
+-- formal treatment
 add-Alg : Nat → Alg NatDesc (λ _ → Nat)
 add-Alg n (zz , refl) = n
 add-Alg _ (ss , acc , refl) = suc acc
+-- show homomorphism between F-algebras
+-- forms a category
 
 _+_ : Nat → Nat → Nat
 n + m = fold (add-Alg m) n

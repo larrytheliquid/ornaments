@@ -91,3 +91,17 @@ gez {m} = ⟪ zz , refl ⟫
 
 ges : {m n : Nat} → Ge m n → Ge (suc m) n
 ges p = ⟪ ss , _ , p , refl ⟫
+
+-- Gen : (D : Desc ⊤) → Orn ⊤ _ D
+-- Gen D = arg NatTag f where
+--   f : (_ : NatTag) → Orn _ _ _
+--   f zz = ret (inv _)
+--   f ss = new (μ D _) (λ _ → rec (inv _) (ret (inv _)))
+
+-- what algebra yields this?
+
+-- Mem-Orn : (X : Set) → Orn ⊤ _ (Vec-Desc X)
+-- Mem-Orn X = arg NatTag f where
+--   f : (_ : NatTag) → Orn _ _ _
+--   f zz = ret (inv _)
+--   f ss = new X (λ _ → arg Nat (λ _ → rec (inv _) (ret (inv _))))
