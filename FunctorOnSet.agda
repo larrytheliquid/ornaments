@@ -50,6 +50,20 @@ mutual
   map-fold D' (rec D) φ (d , ds) = fold φ d , map-fold D' D φ ds
   map-fold D' ret _ ds = ds
 
+forget-Alg : ∀ {D : Desc}
+  (O : Orn D) →
+  Alg (Orn⇛Desc O) (μ D)
+forget-Alg O ds = init (forget-Alg' O ds)
+  where
+  forget-Alg' : ∀ {R} {D : Desc}
+    (O : Orn D) →
+    ⟦ Orn⇛Desc O ⟧ R →
+    ⟦ D ⟧ R
+  forget-Alg' (arg X Of) (x , ds) = x , forget-Alg' (Of x) ds
+  forget-Alg' (rec O) (d , ds) = d , forget-Alg' O ds
+  forget-Alg' ret _ = _
+  forget-Alg' (new X Of) (x , ds) = forget-Alg' (Of x) ds  
+
 ----------------------------------------------------
 
 ℕ-Desc : Desc
