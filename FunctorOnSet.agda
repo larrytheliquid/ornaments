@@ -138,3 +138,6 @@ forget : {D : Desc}
   μ (Orn⇛Desc O) →
   μ D
 forget O = fold (forget-Alg O)
+
+length : ∀ {X} → List X → ℕ
+length {X} = forget (List-Orn X)
