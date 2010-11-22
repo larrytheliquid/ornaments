@@ -50,6 +50,15 @@ mutual
   map-fold D' (rec D) φ (d , ds) = fold φ d , map-fold D' D φ ds
   map-fold D' (arg _ Df) φ (x , ds) = x , map-fold D' (Df x) φ ds
 
+Alg-Orn : ∀ {X}
+  (D : Desc) →
+  Alg D X →
+  Orn D
+Alg-Orn ret _ = ret
+Alg-Orn {X = X} (rec D) φ =
+  new X (λ x → rec (Alg-Orn D (λ y → φ (x , y))))
+Alg-Orn (arg X Df) φ = arg X (λ x → Alg-Orn (Df x) (λ y → φ (x , y)))
+
 ----------------------------------------------------
 
 ℕ-Desc : Desc

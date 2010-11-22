@@ -45,3 +45,15 @@ nil = ⟪ zz , refl ⟫
 
 cons : ∀ {X} → X → List X → List X
 cons x xs = ⟪ ss , x , xs , refl ⟫
+
+Fin-Orn : Orn Nat _ NatDesc
+Fin-Orn = arg NatTag f where
+  f : (_ : NatTag) → Orn _ _ _
+  f zz = new Nat (λ n → ret (inv n))
+  f ss = new Nat (λ n → rec (inv n) (ret (inv (suc n))))
+
+Fin-Desc : Desc Nat
+Fin-Desc = orn Fin-Orn
+
+Fin : Nat → Set
+Fin n = μ Fin-Desc n
