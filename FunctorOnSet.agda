@@ -99,7 +99,7 @@ List = μ List-Desc
 [] = init (one , _)
 
 _∷_ : ℕ → List → List
-n ∷ xs = init (two , n , xs , _)
+x ∷ xs = init (two , x , xs , _)
 
 ----------------------------------------------------
 
@@ -136,3 +136,19 @@ length : List → ℕ
 length = forget List-Orn
 
 ----------------------------------------------------
+
+Vec-Orn : Orn List-Desc
+Vec-Orn = Alg⇒Orn (forget-Alg List-Orn)
+
+Vec-Desc : Desc
+Vec-Desc = Orn⇒Desc Vec-Orn
+
+Vec : Set
+Vec = μ Vec-Desc
+
+nil : Vec
+nil = init (one , _)
+
+cons : ℕ → ℕ → Vec → Vec
+cons n x xs = init (two , x , n , xs , _)
+
