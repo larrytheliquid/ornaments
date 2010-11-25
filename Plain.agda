@@ -3,7 +3,7 @@ open import Data.Unit
 open import Data.Sum
 open import Data.Product
 open import Relation.Binary.PropositionalEquality
-open import Data.Nat
+-- open import Data.Nat
 
 F : Set → Set
 F X = ⊤ ⊎ X
@@ -20,9 +20,12 @@ record IniAlg : Set₁ where
     ini : F μF → μF
     ⟦φ⟧ : μF → Alg.C alg
 
-μF = ℕ
---           ⊤ ⊎ ℕ → ℕ
-[zero,suc] : F μF   → μF
-[zero,suc] (inj₁ _) = zero
-[zero,suc] (inj₂ n) = n + 1
+-- μF = ℕ
+-- --           ⊤ ⊎ ℕ → ℕ
+-- [zero,suc] : F μF   → μF
+-- [zero,suc] (inj₁ _) = zero
+-- [zero,suc] (inj₂ n) = n + 1
 
+[zero,suc] : {X : Set} → X → (X → X) → F X → X
+[zero,suc] zero _ (inj₁ _) = zero
+[zero,suc] _ suc  (inj₂ n) = suc n
