@@ -33,6 +33,14 @@ data Orn : Desc → Set₁ where
   new : {D : Desc} →
     (X : Set) → (X → Orn D) → Orn D
 
+Alg⇒Orn : ∀ {X} {D : Desc} →
+  Alg D X →
+  Orn D
+Alg⇒Orn {_} {ret} _ = ret
+Alg⇒Orn {X} {rec D} φ =
+  new X (λ x → rec (Alg⇒Orn (λ y → φ (x , y))))
+Alg⇒Orn {_} {arg X Df} φ = arg X (λ x → Alg⇒Orn (λ y → φ (x , y)))
+
 Orn⇒Desc : {D : Desc} → Orn D → Desc
 Orn⇒Desc ret = ret
 Orn⇒Desc (rec O) = rec (Orn⇒Desc O)
@@ -49,14 +57,6 @@ mutual
   map-fold D' ret _ ds = ds
   map-fold D' (rec D) φ (d , ds) = fold φ d , map-fold D' D φ ds
   map-fold D' (arg _ Df) φ (x , ds) = x , map-fold D' (Df x) φ ds
-
-Alg⇒Orn : ∀ {X} {D : Desc} →
-  Alg D X →
-  Orn D
-Alg⇒Orn {_} {ret} _ = ret
-Alg⇒Orn {X} {rec D} φ =
-  new X (λ x → rec (Alg⇒Orn (λ y → φ (x , y))))
-Alg⇒Orn {_} {arg X Df} φ = arg X (λ x → Alg⇒Orn (λ y → φ (x , y)))
 
 ----------------------------------------------------
 
@@ -75,25 +75,14 @@ zero = init (one , _)
 suc : ℕ → ℕ
 suc n = init (two , n , _)
 
-List-Orn : Set → Orn ℕ-Desc
-List-Orn X = arg Two f where
-  f : (_ : Two) → Orn _
-  f one = ret
-  f two = new X (λ _ → rec ret)
-
-List-Desc : Set → Desc
-List-Desc X = Orn⇒Desc (List-Orn X)
-
-List : Set → Set
-List X = μ (List-Desc X)
-
-[] : ∀ {X} → List X
-[] = init (one , _)
-
-_∷_ : ∀ {X} → X → List X → List X
-x ∷ xs = init (two , x , xs , _)
-
 ----------------------------------------------------
+
+init-ℕ-Alg : Alg ℕ-Desc ℕ
+init-ℕ-Alg (one , _) = zero
+init-ℕ-Alg (two , acc , _) = suc acc
+
+id-ℕ : ℕ → ℕ
+id-ℕ n = fold init-ℕ-Alg n
 
 add-Alg : ℕ → Alg ℕ-Desc ℕ
 add-Alg n (one , _) = n
@@ -102,36 +91,38 @@ add-Alg _ (two , acc , _) = suc acc
 _+_ : ℕ → ℕ → ℕ
 n + m = fold (add-Alg m) n
 
-concat-Alg : ∀ {X} → List X → Alg (List-Desc X) (List X)
-concat-Alg ys (one , _) = ys
-concat-Alg _ (two , x , acc , _) = x ∷ acc
+----------------------------------------------------
 
-_++_ : ∀ {X} → List X → List X → List X
-xs ++ ys = fold (concat-Alg ys) xs
+List-Orn : Orn ℕ-Desc
+List-Orn = Alg⇒Orn init-ℕ-Alg
+
+List-Desc : Desc 
+List-Desc = Orn⇒Desc List-Orn
+
+List : Set
+List = μ List-Desc
+
+[] : List
+[] = init (one , _)
+
+_∷_ : ℕ → List → List
+n ∷ xs = init (two , n , xs , _)
 
 ----------------------------------------------------
 
-id-ℕ-Alg : Alg ℕ-Desc ℕ
-id-ℕ-Alg (one , _) = zero
-id-ℕ-Alg (two , acc , _) = suc acc
+init-List-Alg : Alg List-Desc List
+init-List-Alg (one , _) = []
+init-List-Alg (two , x , acc , _) = x ∷ acc
 
-id-ℕ : ℕ → ℕ
-id-ℕ n = fold id-ℕ-Alg n
+id-List : List → List
+id-List xs = fold init-List-Alg xs
 
-id-List-Alg : ∀ {X} → Alg (List-Desc X) (List X)
-id-List-Alg (one , _) = []
-id-List-Alg (two , x , acc , _) = x ∷ acc
+concat-Alg : List → Alg List-Desc List
+concat-Alg ys (one , _) = ys
+concat-Alg _ (two , x , acc , _) = x ∷ acc
 
-id-List : ∀ {X} → List X → List X
-id-List xs = fold id-List-Alg xs
-
--- and related to fold how?
-
--- hm1 : ∀ {X} → Alg ℕ-Desc ℕ → Alg (List-Desc X) (List X)
--- hm1 = {!!}
-
--- hm2 : ∀ {X} → ℕ → List X
--- hm2 = {!!}
+_++_ : List → List → List
+xs ++ ys = fold (concat-Alg ys) xs
 
 ----------------------------------------------------
 
@@ -155,38 +146,7 @@ forget : {D : Desc}
   μ D
 forget O = fold (forget-Alg O)
 
-length : ∀ {X} → List X → ℕ
-length {X} = forget (List-Orn X)
+length : List → ℕ
+length = forget List-Orn
 
 ----------------------------------------------------
-
-List-ℕ-Orn : Orn ℕ-Desc
-List-ℕ-Orn = Alg⇒Orn id-ℕ-Alg
-
--- arg Two (λ x → Orn⇒Desc (Alg⇒Orn (λ y → id-ℕ-Alg (x , y))))
-List-ℕ-Desc : Desc 
-List-ℕ-Desc = Orn⇒Desc List-ℕ-Orn
-
-List-ℕ : Set
-List-ℕ = μ List-ℕ-Desc
-
-List-ℕ-nil : List-ℕ
-List-ℕ-nil = init (one , _)
-
-List-ℕ-cons : ℕ → List-ℕ → List-ℕ
-List-ℕ-cons n w = init (two , n , w , _)
-
-Ge-Orn : ℕ → Orn ℕ-Desc
-Ge-Orn n = Alg⇒Orn (add-Alg n)
-
-Ge-Desc : ℕ → Desc
-Ge-Desc n = Orn⇒Desc (Ge-Orn n)
-
-Ge : ℕ → Set
-Ge n = μ (Ge-Desc n)
-
-Ge-zero : {n : ℕ} → Ge n
-Ge-zero = init (one , _)
-
-Ge-suc : {n : ℕ} → Ge n → Ge n
-Ge-suc {n} p = init (two , n , p , _)
