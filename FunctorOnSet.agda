@@ -176,3 +176,17 @@ List-ℕ-nil = init (one , _)
 List-ℕ-cons : ℕ → List-ℕ → List-ℕ
 List-ℕ-cons n w = init (two , n , w , _)
 
+Ge-Orn : ℕ → Orn ℕ-Desc
+Ge-Orn n = Alg⇒Orn (add-Alg n)
+
+Ge-Desc : ℕ → Desc
+Ge-Desc n = Orn⇒Desc (Ge-Orn n)
+
+Ge : ℕ → Set
+Ge n = μ (Ge-Desc n)
+
+Ge-zero : {n : ℕ} → Ge n
+Ge-zero = init (one , _)
+
+Ge-suc : {n : ℕ} → Ge n → Ge n
+Ge-suc {n} p = init (two , n , p , _)
