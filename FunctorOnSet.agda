@@ -84,13 +84,6 @@ init-ℕ-Alg (two , acc , _) = suc acc
 id-ℕ : ℕ → ℕ
 id-ℕ n = fold init-ℕ-Alg n
 
-add-Alg : ℕ → Alg ℕ-Desc ℕ
-add-Alg n (one , _) = n
-add-Alg _ (two , acc , _) = suc acc
-
-_+_ : ℕ → ℕ → ℕ
-n + m = fold (add-Alg m) n
-
 ----------------------------------------------------
 
 List-Orn : Orn ℕ-Desc
@@ -116,13 +109,6 @@ init-List-Alg (two , x , acc , _) = x ∷ acc
 
 id-List : List → List
 id-List xs = fold init-List-Alg xs
-
-concat-Alg : List → Alg List-Desc List
-concat-Alg ys (one , _) = ys
-concat-Alg _ (two , x , acc , _) = x ∷ acc
-
-_++_ : List → List → List
-xs ++ ys = fold (concat-Alg ys) xs
 
 ----------------------------------------------------
 
