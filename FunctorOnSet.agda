@@ -58,6 +58,9 @@ mutual
   map-fold D' (rec D) φ (d , ds) = fold φ d , map-fold D' D φ ds
   map-fold D' (arg _ Df) φ (x , ds) = x , map-fold D' (Df x) φ ds
 
+id : {D : Desc} → μ D → μ D
+id x = fold init x
+
 ----------------------------------------------------
 
 ℕ-Desc : Desc
@@ -80,9 +83,6 @@ suc n = init (two , n , _)
 init-ℕ-Alg : Alg ℕ-Desc ℕ
 init-ℕ-Alg = init
 
-id-ℕ : ℕ → ℕ
-id-ℕ n = fold init-ℕ-Alg n
-
 ----------------------------------------------------
 
 List-Orn : Orn ℕ-Desc
@@ -104,9 +104,6 @@ x ∷ xs = init (two , x , xs , _)
 
 init-List-Alg : Alg List-Desc List
 init-List-Alg = init
-
-id-List : List → List
-id-List xs = fold init-List-Alg xs
 
 ----------------------------------------------------
 
