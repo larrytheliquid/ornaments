@@ -97,6 +97,23 @@ x ∷ xs = in-Alg (two , x , xs , _)
 
 ----------------------------------------------------
 
+Bist-Orn : Orn List-Desc
+Bist-Orn = Alg⇒Orn {List} in-Alg
+
+Bist-Desc : Desc
+Bist-Desc = Orn⇒Desc Bist-Orn
+
+Bist : Set
+Bist = μ Bist-Desc
+
+bnil : Bist
+bnil = in-Alg (one , _)
+
+bcons : ℕ → List → Bist → Bist
+bcons n xs ts = in-Alg (two , n , xs , ts , _)
+
+----------------------------------------------------
+
 forget-Alg : ∀ {D : Desc}
   (O : Orn D) →
   Alg (Orn⇒Desc O) (μ D)
@@ -104,8 +121,7 @@ forget-Alg O ds = in-Alg (forget-Alg' O ds)
   where
   forget-Alg' : ∀ {R} {D : Desc}
     (O : Orn D) →
-    ⟦ Orn⇒Desc O ⟧ R →
-    ⟦ D ⟧ R
+    ⟦ Orn⇒Desc O ⟧ R → ⟦ D ⟧ R
   forget-Alg' ret _ = _
   forget-Alg' (rec O) (d , ds) = d , forget-Alg' O ds
   forget-Alg' (arg X Of) (x , ds) = x , forget-Alg' (Of x) ds
