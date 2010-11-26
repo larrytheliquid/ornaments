@@ -18,7 +18,7 @@ data Desc : Set₁ where
 ⟦ arg X D ⟧ R = Σ X (λ x → ⟦ D x ⟧ R)
 
 data μ (D : Desc) : Set where
-  init : ⟦ D ⟧ (μ D) → μ D
+  in-Alg : ⟦ D ⟧ (μ D) → μ D
 
 Alg : Desc → Set → Set
 Alg D X = ⟦ D ⟧ X → X
@@ -50,7 +50,7 @@ Orn⇒Desc (new X Of) = arg X (λ x → Orn⇒Desc (Of x))
 mutual
   fold : ∀ {X} {D : Desc} →
     Alg D X → μ D → X
-  fold {D = D} φ (init ds) = φ (map-fold D D φ ds)
+  fold {D = D} φ (in-Alg ds) = φ (map-fold D D φ ds)
 
   map-fold : ∀ {X} (D' D : Desc) →
     Alg D' X → ⟦ D ⟧ (μ D') → ⟦ D ⟧ X
@@ -59,7 +59,7 @@ mutual
   map-fold D' (arg _ Df) φ (x , ds) = x , map-fold D' (Df x) φ ds
 
 id : {D : Desc} → μ D → μ D
-id x = fold init x
+id x = fold in-Alg x
 
 ----------------------------------------------------
 
@@ -73,20 +73,20 @@ id x = fold init x
 ℕ = μ ℕ-Desc
 
 zero : ℕ
-zero = init (one , _)
+zero = in-Alg (one , _)
 
 suc : ℕ → ℕ
-suc n = init (two , n , _)
+suc n = in-Alg (two , n , _)
 
 ----------------------------------------------------
 
-init-ℕ-Alg : Alg ℕ-Desc ℕ
-init-ℕ-Alg = init
+in-Alg-ℕ : Alg ℕ-Desc ℕ
+in-Alg-ℕ = in-Alg
 
 ----------------------------------------------------
 
 List-Orn : Orn ℕ-Desc
-List-Orn = Alg⇒Orn init-ℕ-Alg
+List-Orn = Alg⇒Orn in-Alg-ℕ
 
 List-Desc : Desc 
 List-Desc = Orn⇒Desc List-Orn
@@ -95,22 +95,22 @@ List : Set
 List = μ List-Desc
 
 [] : List
-[] = init (one , _)
+[] = in-Alg (one , _)
 
 _∷_ : ℕ → List → List
-x ∷ xs = init (two , x , xs , _)
+x ∷ xs = in-Alg (two , x , xs , _)
 
 ----------------------------------------------------
 
-init-List-Alg : Alg List-Desc List
-init-List-Alg = init
+in-Alg-List : Alg List-Desc List
+in-Alg-List = in-Alg
 
 ----------------------------------------------------
 
 forget-Alg : ∀ {D : Desc}
   (O : Orn D) →
   Alg (Orn⇒Desc O) (μ D)
-forget-Alg O ds = init (forget-Alg' O ds)
+forget-Alg O ds = in-Alg (forget-Alg' O ds)
   where
   forget-Alg' : ∀ {R} {D : Desc}
     (O : Orn D) →
@@ -142,8 +142,8 @@ Vec : Set
 Vec = μ Vec-Desc
 
 nil : Vec
-nil = init (one , _)
+nil = in-Alg (one , _)
 
 cons : ℕ → ℕ → Vec → Vec
-cons n x xs = init (two , x , n , xs , _)
+cons n x xs = in-Alg (two , x , n , xs , _)
 
