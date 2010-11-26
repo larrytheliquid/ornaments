@@ -78,8 +78,7 @@ suc n = init (two , n , _)
 ----------------------------------------------------
 
 init-ℕ-Alg : Alg ℕ-Desc ℕ
-init-ℕ-Alg (one , _) = zero
-init-ℕ-Alg (two , acc , _) = suc acc
+init-ℕ-Alg = init
 
 id-ℕ : ℕ → ℕ
 id-ℕ n = fold init-ℕ-Alg n
@@ -104,8 +103,7 @@ x ∷ xs = init (two , x , xs , _)
 ----------------------------------------------------
 
 init-List-Alg : Alg List-Desc List
-init-List-Alg (one , _) = []
-init-List-Alg (two , x , acc , _) = x ∷ acc
+init-List-Alg = init
 
 id-List : List → List
 id-List xs = fold init-List-Alg xs
