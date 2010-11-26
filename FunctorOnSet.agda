@@ -80,13 +80,8 @@ suc n = in-Alg (two , n , _)
 
 ----------------------------------------------------
 
-in-Alg-ℕ : Alg ℕ-Desc ℕ
-in-Alg-ℕ = in-Alg
-
-----------------------------------------------------
-
 List-Orn : Orn ℕ-Desc
-List-Orn = Alg⇒Orn in-Alg-ℕ
+List-Orn = Alg⇒Orn {ℕ} in-Alg
 
 List-Desc : Desc 
 List-Desc = Orn⇒Desc List-Orn
@@ -99,11 +94,6 @@ List = μ List-Desc
 
 _∷_ : ℕ → List → List
 x ∷ xs = in-Alg (two , x , xs , _)
-
-----------------------------------------------------
-
-in-Alg-List : Alg List-Desc List
-in-Alg-List = in-Alg
 
 ----------------------------------------------------
 
