@@ -33,6 +33,11 @@ data Orn : Desc → Set₁ where
   new : {D : Desc} →
     (X : Set) → (X → Orn D) → Orn D
 
+Desc⇒Orn : (D : Desc) → Orn D
+Desc⇒Orn ret = ret
+Desc⇒Orn (rec D) = rec (Desc⇒Orn D)
+Desc⇒Orn (arg A Df) = arg A (λ a → Desc⇒Orn (Df a))
+
 Alg⇒Orn : ∀ {X} {D : Desc} →
   Alg D X →
   Orn D
