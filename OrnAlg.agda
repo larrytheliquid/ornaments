@@ -35,73 +35,73 @@ Alg-orn : ∀ {I J}
 Alg-orn (arg A Df) φ = arg A (λ a → Alg-orn (Df a) (λ x → φ (a , x)))
 Alg-orn {J = J} (rec i D) φ =
   new (J i) (λ j → rec (inv (i , j)) (Alg-orn D (λ x → φ (j , x))))
-Alg-orn (ret i) φ = ret (inv (i , φ refl))
+Alg-orn {J = J} (ret i) φ = new (J i) (λ _ → ret (inv (i , φ refl)))
 
-Vec-Orn : (X : Set) → Orn (⊤ × Nat) proj₁ (List-Desc X)
-Vec-Orn X = Alg-orn (List-Desc X) (orn-Alg (List-Orn X))
+-- Vec-Orn : (X : Set) → Orn (⊤ × Nat) proj₁ (List-Desc X)
+-- Vec-Orn X = Alg-orn (List-Desc X) (orn-Alg (List-Orn X))
 
-Vec-Desc : (X : Set) → Desc (⊤ × Nat)
-Vec-Desc X = orn (Vec-Orn X)
+-- Vec-Desc : (X : Set) → Desc (⊤ × Nat)
+-- Vec-Desc X = orn (Vec-Orn X)
 
-Vec : Set → Nat → Set
-Vec X n = μ (Vec-Desc X) (_ , n)
+-- Vec : Set → Nat → Set
+-- Vec X n = μ (Vec-Desc X) (_ , n)
 
-Hm-Orn : (X : Set) → Orn ((⊤ × Nat) × List X) proj₁ (Vec-Desc X)
-Hm-Orn X = Alg-orn (Vec-Desc X) (orn-Alg (Vec-Orn X))
+-- Hm-Orn : (X : Set) → Orn ((⊤ × Nat) × List X) proj₁ (Vec-Desc X)
+-- Hm-Orn X = Alg-orn (Vec-Desc X) (orn-Alg (Vec-Orn X))
 
-Hm-Desc : (X : Set) → Desc ((⊤ × Nat) × List X)
-Hm-Desc X = orn (Hm-Orn X)
+-- Hm-Desc : (X : Set) → Desc ((⊤ × Nat) × List X)
+-- Hm-Desc X = orn (Hm-Orn X)
 
-Hm : (X : Set) → Nat → List X → Set
-Hm X n xs = μ (Hm-Desc X) ((_ , n) , xs)
+-- Hm : (X : Set) → Nat → List X → Set
+-- Hm X n xs = μ (Hm-Desc X) ((_ , n) , xs)
 
-hmnil : ∀ {A} → Hm A zero nil
-hmnil = ⟪ zz , refl ⟫
+-- hmnil : ∀ {A} → Hm A zero nil
+-- hmnil = ⟪ zz , refl ⟫
 
-hmcons : ∀ {n A as} → (a : A) → Hm A n as → Hm A (suc n) (cons a as)
-hmcons {n} {as = as} x xs = ⟪ ss , x , n , as , xs , refl ⟫
+-- hmcons : ∀ {n A as} → (a : A) → Hm A n as → Hm A (suc n) (cons a as)
+-- hmcons {n} {as = as} x xs = ⟪ ss , x , n , as , xs , refl ⟫
 
-vnil : ∀ {X} → Vec X zero
-vnil = ⟪ zz , refl ⟫
+-- vnil : ∀ {X} → Vec X zero
+-- vnil = ⟪ zz , refl ⟫
 
-vcons : ∀ {n X} → X → Vec X n → Vec X (suc n)
-vcons {n} x xs = ⟪ ss , x , n , xs , refl ⟫
+-- vcons : ∀ {n X} → X → Vec X n → Vec X (suc n)
+-- vcons {n} x xs = ⟪ ss , x , n , xs , refl ⟫
 
-concat-Alg : ∀ {n X} → Vec X n → Alg (Vec-Desc X) (λ m → Vec X (proj₂ m + n))
-concat-Alg ys (zz , refl) = ys
-concat-Alg _ (ss , x , _ , acc , refl) = vcons x acc
+-- concat-Alg : ∀ {n X} → Vec X n → Alg (Vec-Desc X) (λ m → Vec X (proj₂ m + n))
+-- concat-Alg ys (zz , refl) = ys
+-- concat-Alg _ (ss , x , _ , acc , refl) = vcons x acc
 
-_++_ : ∀ {X m n} → Vec X m → Vec X n → Vec X (m + n)
-xs ++ ys = fold (concat-Alg ys) xs
+-- _++_ : ∀ {X m n} → Vec X m → Vec X n → Vec X (m + n)
+-- xs ++ ys = fold (concat-Alg ys) xs
 
-to-list : ∀ {X n} → Vec X n → List X
-to-list {X} = forget (Vec-Orn X)
+-- to-list : ∀ {X n} → Vec X n → List X
+-- to-list {X} = forget (Vec-Orn X)
 
-Ge-Orn : Nat → Orn (⊤ × Nat) proj₁ NatDesc
-Ge-Orn n = Alg-orn NatDesc (add-Alg n)
+-- Ge-Orn : Nat → Orn (⊤ × Nat) proj₁ NatDesc
+-- Ge-Orn n = Alg-orn NatDesc (add-Alg n)
 
-Ge-Desc : Nat → Desc (⊤ × Nat)
-Ge-Desc n = orn (Ge-Orn n)
+-- Ge-Desc : Nat → Desc (⊤ × Nat)
+-- Ge-Desc n = orn (Ge-Orn n)
 
-Ge : Nat → Nat → Set
-Ge m n = μ (Ge-Desc n) (_ , m)
+-- Ge : Nat → Nat → Set
+-- Ge m n = μ (Ge-Desc n) (_ , m)
 
-gez : {m : Nat} → Ge m m
-gez {m} = ⟪ zz , refl ⟫
+-- gez : {m : Nat} → Ge m m
+-- gez {m} = ⟪ zz , refl ⟫
 
-ges : {m n : Nat} → Ge m n → Ge (suc m) n
-ges p = ⟪ ss , _ , p , refl ⟫
+-- ges : {m n : Nat} → Ge m n → Ge (suc m) n
+-- ges p = ⟪ ss , _ , p , refl ⟫
 
--- Gen : (D : Desc ⊤) → Orn ⊤ _ D
--- Gen D = arg NatTag f where
---   f : (_ : NatTag) → Orn _ _ _
---   f zz = ret (inv _)
---   f ss = new (μ D _) (λ _ → rec (inv _) (ret (inv _)))
+-- -- Gen : (D : Desc ⊤) → Orn ⊤ _ D
+-- -- Gen D = arg NatTag f where
+-- --   f : (_ : NatTag) → Orn _ _ _
+-- --   f zz = ret (inv _)
+-- --   f ss = new (μ D _) (λ _ → rec (inv _) (ret (inv _)))
 
--- what algebra yields this?
+-- -- what algebra yields this?
 
--- Mem-Orn : (X : Set) → Orn ⊤ _ (Vec-Desc X)
--- Mem-Orn X = arg NatTag f where
---   f : (_ : NatTag) → Orn _ _ _
---   f zz = ret (inv _)
---   f ss = new X (λ _ → arg Nat (λ _ → rec (inv _) (ret (inv _))))
+-- -- Mem-Orn : (X : Set) → Orn ⊤ _ (Vec-Desc X)
+-- -- Mem-Orn X = arg NatTag f where
+-- --   f : (_ : NatTag) → Orn _ _ _
+-- --   f zz = ret (inv _)
+-- --   f ss = new X (λ _ → arg Nat (λ _ → rec (inv _) (ret (inv _))))
