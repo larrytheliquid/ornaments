@@ -4,8 +4,8 @@ open import Data.Sum
 open import Data.Product
 open import Relation.Binary.PropositionalEquality
 
-data Two : Set where
-  one two : Two
+data Tag : Set where
+  ret rec : Tag
 
 data Desc : Set₁ where
   ret : Desc
@@ -69,19 +69,19 @@ id x = fold in-Alg x
 ----------------------------------------------------
 
 ℕ-Desc : Desc
-ℕ-Desc = arg Two f where
-  f : Two → Desc
-  f one = ret
-  f two = rec ret
+ℕ-Desc = arg Tag f where
+  f : Tag → Desc
+  f ret = ret
+  f rec = rec ret
 
 ℕ : Set
 ℕ = μ ℕ-Desc
 
 zero : ℕ
-zero = in-Alg (one , _)
+zero = in-Alg (ret , _)
 
 suc : ℕ → ℕ
-suc n = in-Alg (two , n , _)
+suc n = in-Alg (rec , n , _)
 
 ----------------------------------------------------
 
@@ -95,10 +95,10 @@ List : Set
 List = μ List-Desc
 
 [] : List
-[] = in-Alg (one , _)
+[] = in-Alg (ret , _)
 
 _∷_ : ℕ → List → List
-x ∷ xs = in-Alg (two , x , xs , _)
+x ∷ xs = in-Alg (rec , x , xs , _)
 
 ----------------------------------------------------
 
@@ -112,10 +112,10 @@ Bist : Set
 Bist = μ Bist-Desc
 
 bnil : Bist
-bnil = in-Alg (one , _)
+bnil = in-Alg (ret , _)
 
 bcons : ℕ → List → Bist → Bist
-bcons n xs ts = in-Alg (two , n , xs , ts , _)
+bcons n xs ts = in-Alg (rec , n , xs , ts , _)
 
 ----------------------------------------------------
 
@@ -153,8 +153,8 @@ Vec : Set
 Vec = μ Vec-Desc
 
 nil : Vec
-nil = in-Alg (one , _)
+nil = in-Alg (ret , _)
 
 cons : ℕ → ℕ → Vec → Vec
-cons n x xs = in-Alg (two , x , n , xs , _)
+cons n x xs = in-Alg (rec , x , n , xs , _)
 
