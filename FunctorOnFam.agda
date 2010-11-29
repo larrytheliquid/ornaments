@@ -80,3 +80,23 @@ nil = in-Alg (ret , refl)
 
 cons : ∀ {X} → X → List X → List X
 cons x xs = in-Alg (rec , x , xs , refl)
+
+Vec-Orn : (X : Set) → Orn ℕ _ (List-Desc X)
+Vec-Orn X = arg Tag f where
+  f : (_ : Tag) → Orn _ _ _
+  f ret = ret (inv zero)
+  f rec = arg X (λ _ → new ℕ
+    (λ n → rec (inv n) (ret (inv (suc n)))))
+
+Vec-Desc : Set → Desc ℕ
+Vec-Desc X = Orn⇒Desc (Vec-Orn X)
+
+Vec : Set → ℕ → Set
+Vec X n = μ (Vec-Desc X) n
+
+vnil : ∀ {X} → Vec X zero
+vnil = in-Alg (ret , refl)
+
+vcons : ∀ {n X} → X → Vec X n → Vec X (suc n)
+vcons {n} x xs = in-Alg (rec , x , n , xs , refl)
+
