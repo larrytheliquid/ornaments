@@ -57,11 +57,7 @@ zero = in-Alg (ret , refl)
 suc : ℕ → ℕ
 suc n = in-Alg (rec , n , refl)
 
-Fin-Orn : Orn ℕ _ ℕ-Desc
-Fin-Orn = arg Tag f where
-  f : (_ : Tag) → Orn _ _ _
-  f ret = new ℕ (λ n → ret (inv n))
-  f rec = new ℕ (λ n → rec (inv n) (ret (inv (suc n))))
+----------------------------------------------------
 
 List-Orn : Set → Orn ⊤ _ ℕ-Desc
 List-Orn X = arg Tag f where
@@ -81,6 +77,38 @@ nil = in-Alg (ret , refl)
 cons : ∀ {X} → X → List X → List X
 cons x xs = in-Alg (rec , x , xs , refl)
 
+----------------------------------------------------
+
+Env-Orn : {X : Set} → (P : X → Set) →
+  Orn (List X) _ (List-Desc X)
+Env-Orn P = arg Tag f where
+  f : (_ : Tag) → Orn _ _ _
+  f ret = ret (inv nil)
+  f rec = arg _ λ x → (new (List _)
+    λ xs → rec (inv xs) (ret (inv (cons x xs))))
+
+Env-Desc : {X : Set} → (P : X → Set) → Desc (List X)
+Env-Desc P = Orn⇒Desc (Env-Orn P)
+
+Env : {X : Set} → (P : X → Set) → List X → Set
+Env P xs = μ (Env-Desc P) xs
+
+----------------------------------------------------
+
+Fin-Orn : Orn ℕ _ ℕ-Desc
+Fin-Orn = arg Tag f where
+  f : (_ : Tag) → Orn _ _ _
+  f ret = new ℕ (λ n → ret (inv n))
+  f rec = new ℕ (λ n → rec (inv n) (ret (inv (suc n))))
+
+Fin-Desc : Desc ℕ
+Fin-Desc = Orn⇒Desc Fin-Orn
+
+Fin : ℕ → Set
+Fin n = μ Fin-Desc n
+
+----------------------------------------------------
+
 Vec-Orn : (X : Set) → Orn ℕ _ (List-Desc X)
 Vec-Orn X = arg Tag f where
   f : (_ : Tag) → Orn _ _ _
@@ -99,4 +127,3 @@ vnil = in-Alg (ret , refl)
 
 vcons : ∀ {n X} → X → Vec X n → Vec X (suc n)
 vcons {n} x xs = in-Alg (rec , x , n , xs , refl)
-
