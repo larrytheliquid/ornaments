@@ -98,7 +98,7 @@ Env P xs = μ (Env-Desc P) xs
 Fin-Orn : Orn ℕ _ ℕ-Desc
 Fin-Orn = arg Tag f where
   f : (_ : Tag) → Orn _ _ _
-  f ret = new ℕ (λ n → ret (inv n))
+  f ret = new ℕ (λ n → ret (inv (suc n)))
   f rec = new ℕ (λ n → rec (inv n) (ret (inv (suc n))))
 
 Fin-Desc : Desc ℕ
@@ -127,3 +127,9 @@ vnil = in-Alg (ret , refl)
 
 vcons : ∀ {n X} → X → Vec X n → Vec X (suc n)
 vcons {n} x xs = in-Alg (rec , x , n , xs , refl)
+
+lookup : {X : Set} {n : ℕ} → Fin n → Vec X n → X
+lookup (in-Alg (ret , _ , refl)) (in-Alg (ret , ()))
+lookup (in-Alg (ret , _ , refl)) (in-Alg (rec , x , _)) = x
+lookup (in-Alg (rec , n , i , refl)) (in-Alg (ret , ()))
+lookup (in-Alg (rec , n , i , refl)) (in-Alg (rec , _ , .n , xs , refl)) = lookup i xs
